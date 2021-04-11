@@ -66,7 +66,7 @@ public class ViewAbout extends PixelStage {
 		BorderPane.setMargin(ok, new Insets(6, 0, 6, 0));
 		super.root.setCenter(root);
 		super.root.setBottom(ok);
-		setSyncTitle("关于 PixivDL");
+		setSyncTitle("关于");
 		getIcons().add(new Image("icon.png"));
 		initModality(Modality.APPLICATION_MODAL);
 	}
