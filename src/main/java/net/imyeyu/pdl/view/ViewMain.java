@@ -48,7 +48,7 @@ public abstract class ViewMain extends PixelApplication {
 	protected TextArea cookie, pids, log;
 	protected TextField ip, port, path;
 	protected PopupTips popupTips;
-	protected PixelButton toggle, stop, about, select, filter;
+	protected PixelButton run, stop, about, select, filter;
 	protected ComboBox<Integer> multiDL, delay;
 
 	@Override
@@ -147,18 +147,18 @@ public abstract class ViewMain extends PixelApplication {
 		options.setSpacing(6);
 
 		// 操作
-		toggle = new PixelButton("开始");
-		Zpix.css(toggle, Zpix.M);
+		run = new PixelButton("开始");
+		Zpix.css(run, Zpix.M);
 		stop = new PixelButton("停止");
 		about = new PixelButton("关于");
 
 		GridPane ctrls = new GridPane();
 		GridPane.setValignment(stop, VPos.BOTTOM);
 		ctrls.setHgap(6);
-		ctrls.add(toggle, 0, 0, 1, 2);
+		ctrls.add(run, 0, 0, 1, 2);
 		ctrls.add(about, 1, 0, 1, 1);
 		ctrls.add(stop, 1, 1, 1, 1);
-		toggle.prefHeightProperty().bind(ctrls.heightProperty());
+		run.prefHeightProperty().bind(ctrls.heightProperty());
 
 		GroupPane ctrlGP = new GroupPane("操作", new HBox(8, options, ctrls));
 

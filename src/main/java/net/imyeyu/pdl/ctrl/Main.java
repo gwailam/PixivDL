@@ -47,6 +47,7 @@ public class Main extends ViewMain {
 		cookie.disableProperty().bind(isRunning);
 		multiDL.disableProperty().bind(isRunning);
 		delay.disableProperty().bind(isRunning);
+		run.disableProperty().bind(isRunning);
 		stop.disableProperty().bind(isRunning.not());
 		pids.disableProperty().bind(isRunning);
 		filter.disableProperty().bind(isRunning);
@@ -74,7 +75,7 @@ public class Main extends ViewMain {
 			}
 		});
 		// 开始
-		toggle.setOnAction(event -> {
+		run.setOnAction(event -> {
 			isRunning.set(true);
 
 			PixivDL.config.bindUpdate();
@@ -184,6 +185,17 @@ public class Main extends ViewMain {
 			if (delay != null && delay != 0) {
 				multiDL.setValue(1);
 			}
+		});
+		delay.hoverProperty().addListener((obs, o, isHover) -> {
+			if (isHover) {
+				popupTips.showText(stage, "毫秒");
+			} else {
+				popupTips.hide();
+			}
+		});
+		delay.setOnMouseMoved(event -> {
+			popupTips.setX(event.getScreenX() + 6);
+			popupTips.setY(event.getScreenY() + 6);
 		});
 		// 待解析 PID
 		pids.hoverProperty().addListener((obs, o, isHover) -> {
