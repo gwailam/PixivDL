@@ -1,3 +1,9 @@
+.gitignore
+.mvn/**
+.idea/**
+
+PixivDL.ini
+
 target/
 pom.xml.tag
 pom.xml.releaseBackup
