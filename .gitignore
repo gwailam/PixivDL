@@ -1,6 +1,7 @@
 .gitignore
 .mvn/**
 .idea/**
+downloads/**
 
 PixivDL.ini
 
