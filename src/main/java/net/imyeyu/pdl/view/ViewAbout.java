@@ -58,8 +58,6 @@ public class ViewAbout extends Stage {
 		root.setPadding(new Insets(8));
 		root.setBorder(BetterFX.BORDER_TOP);
 
-		close();
-
 		Scene scene = new Scene(root);
 		scene.getStylesheets().add(BetterFX.CSS);
 		setScene(scene);
