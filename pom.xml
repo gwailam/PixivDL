@@ -6,7 +6,7 @@
 
 	<groupId>net.imyeyu.pdl</groupId>
 	<artifactId>PixivDL</artifactId>
-	<version>1.0.0</version>
+	<version>1.1.1</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,22 +23,7 @@
 		<dependency>
 			<groupId>net.imyeyu.betterfx</groupId>
 			<artifactId>BetterFX</artifactId>
-			<version>1.1.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.openjfx</groupId>
-					<artifactId>javafx-controls</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.openjfx</groupId>
-					<artifactId>javafx-graphics</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>net.imyeyu.pixelfx</groupId>
-			<artifactId>PixelFX</artifactId>
-			<version>1.0.3</version>
+			<version>1.2.2</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.openjfx</groupId>
@@ -69,22 +54,32 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.2.2</version>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>15</source>
+					<target>15</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.3.0</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>net.imyeyu.pdl.PixivDL</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
 				<executions>
 					<execution>
 						<phase>package</phase>
 						<goals>
-							<goal>shade</goal>
+							<goal>single</goal>
 						</goals>
-						<configuration>
-							<transformers>
-								<transformer
-										implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>net.imyeyu.pdl.PixivDL</mainClass>
-								</transformer>
-							</transformers>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>

@@ -3,3 +3,13 @@
 	-fx-smooth: false;
 	-fx-stroke-width: 2;
 }
+
+.split-pane:horizontal > .split-pane-divider {
+    -fx-background-color: transparent, -fx-inner-border-horizontal;
+	-fx-background-insets: 0;
+}
+
+.table-view {
+	-fx-padding: 0;
+	-fx-background-color: transparent;
+}

@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.StackPane;
+import net.imyeyu.betterfx.BetterFX;
 
 /**
  * 下载进度
@@ -23,7 +24,12 @@ public class PixivPB extends StackPane {
 		pb = new ProgressBar();
 
 		text = new Label("0 / 0");
-		text.setTranslateY(-1);
+		text.setTranslateY(-2);
+		pb.progressProperty().addListener((obs, o, pb) -> {
+			if (pb != null) {
+				text.setTextFill(pb.doubleValue() < .5 ? BetterFX.BLACK : BetterFX.WHITE);
+			}
+		});
 
 		now.addListener((obs, o, now) -> text.setText(now + " / " + count.get()));
 		count.addListener((obs, o, count) -> text.setText(now.get() + " / " + count));

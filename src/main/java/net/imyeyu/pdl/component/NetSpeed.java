@@ -8,7 +8,7 @@ import javafx.scene.chart.XYChart.Data;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import net.imyeyu.betterfx.BetterFX;
-import net.imyeyu.betterfx.extend.AnchorPaneX;
+import net.imyeyu.betterfx.extend.XAnchorPane;
 
 /**
  * 网速曲线
@@ -17,7 +17,7 @@ import net.imyeyu.betterfx.extend.AnchorPaneX;
  */
 public class NetSpeed extends AnchorPane {
 
-	private long i = 0;
+	private long i;
 	private final Label label;
 	private final XYChart.Series<String, Number> series;
 
@@ -47,11 +47,11 @@ public class NetSpeed extends AnchorPane {
 		lineChart.prefWidthProperty().bind(widthProperty());
 		lineChart.prefHeightProperty().bind(heightProperty());
 
-		AnchorPaneX.def(lineChart, -12, -20, -22, -32);
+		XAnchorPane.def(lineChart, -12, -20, -22, -32);
 
 		label = new Label("0 B/s");
 		label.setTextFill(BetterFX.GRAY);
-		AnchorPaneX.def(label, -4, 0, null, null);
+		XAnchorPane.def(label, -4, 0, null, null);
 
 		getChildren().addAll(lineChart, label);
 

@@ -130,6 +130,7 @@ public class DownloadThread extends Service<Integer> {
 								updateMessage(threadName + "[错误] " + e.getMessage());
 								updateMessage(threadName + "[错误] 下载失败（已跳过）：" + path + '/' + name);
 								pixivImage.addFail(name);
+								e.printStackTrace();
 								throw e;
 							}
 						}
@@ -137,6 +138,7 @@ public class DownloadThread extends Service<Integer> {
 						updateMessage(threadName + "[错误] " + e.getMessage());
 						updateMessage(threadName + "[错误] 无法解析页面，PID = " + pid);
 						pixivImage.addFail(pid);
+						e.printStackTrace();
 						throw e;
 					}
 				}

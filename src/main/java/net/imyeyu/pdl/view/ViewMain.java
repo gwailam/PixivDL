@@ -1,9 +1,12 @@
 package net.imyeyu.pdl.view;
 
+import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
@@ -20,42 +23,40 @@ import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import net.imyeyu.betterfx.BetterFX;
-import net.imyeyu.betterfx.extend.AnchorPaneX;
-import net.imyeyu.betterfx.extend.BorderX;
+import net.imyeyu.betterfx.bean.PopupTips;
+import net.imyeyu.betterfx.component.BorderPaneGroup;
+import net.imyeyu.betterfx.component.GroupPane;
+import net.imyeyu.betterfx.component.HBoxGroup;
+import net.imyeyu.betterfx.component.InputGroup;
+import net.imyeyu.betterfx.component.dialog.Alert;
+import net.imyeyu.betterfx.extend.XAnchorPane;
+import net.imyeyu.betterfx.service.PopupTipsService;
+import net.imyeyu.betterfx.util.Zpix;
 import net.imyeyu.betterjava.Encode;
 import net.imyeyu.betterjava.config.ConfigT;
 import net.imyeyu.pdl.PixivDL;
 import net.imyeyu.pdl.component.DLTable;
 import net.imyeyu.pdl.component.NetSpeed;
-import net.imyeyu.pdl.component.PopupTips;
-import net.imyeyu.pixelfx.PixelApplication;
-import net.imyeyu.pixelfx.Zpix;
-import net.imyeyu.pixelfx.component.GroupPane;
-import net.imyeyu.pixelfx.component.InputGroup;
-import net.imyeyu.pixelfx.component.PixelButton;
-import net.imyeyu.pixelfx.dialog.Alert;
 
 /**
  * 主界面
  *
  * 夜雨 创建于 2021/4/11 01:43
  */
-public abstract class ViewMain extends PixelApplication {
+public abstract class ViewMain extends Application {
+
+	private static final Image COOKIE_TIPS = new Image("cookie-tips.png");
 
 	protected Label logClean, logExport;
+	protected Button run, stop, about, select, open, filter;
 	protected DLTable list;
 	protected NetSpeed netSpeed;
 	protected TextArea cookie, pids, log;
 	protected TextField ip, port, path;
-	protected PopupTips popupTips;
-	protected PixelButton run, stop, about, select, filter;
 	protected ComboBox<Integer> multiDL, delay;
 
 	@Override
 	public void start(Stage stage) {
-		super.start(stage);
-		popupTips = new PopupTips();
-
 		// 代理设置
 		ip = new TextField();
 		ip.setPrefWidth(120);
@@ -76,6 +77,7 @@ public abstract class ViewMain extends PixelApplication {
 		cookie = new TextArea();
 		cookie.setWrapText(true);
 		cookie.setPrefSize(280, 51);
+		PopupTipsService.install(cookie, new PopupTips(COOKIE_TIPS));
 		PixivDL.config.bindTextProperty(cookie, "cookie");
 		GroupPane cookieGP = new GroupPane("Cookie", cookie);
 
@@ -104,7 +106,7 @@ public abstract class ViewMain extends PixelApplication {
 					isInval = value < 1 || 64 < value;
 				}
 				if (isInval) {
-					new Alert("数据不合法，取值范围 [1 - 64] 整数");
+					new Alert(Alert.AlertType.ERROR, "数据不合法，取值范围 [1 - 64] 整数").showAndWait();
 				}
 				return isInval ? 4 : Integer.parseInt(string);
 			}
@@ -131,7 +133,7 @@ public abstract class ViewMain extends PixelApplication {
 					isInval = value < 0 || 10000 < value;
 				}
 				if (isInval) {
-					new Alert("数据不合法，取值范围 [0 - 10000] 整数（单位：毫秒）");
+					new Alert(Alert.AlertType.ERROR, "数据不合法，取值范围 [0 - 10000] 整数").showAndWait();
 				}
 				return isInval ? 0 : Integer.parseInt(string);
 			}
@@ -140,6 +142,7 @@ public abstract class ViewMain extends PixelApplication {
 		delay.setValue(0);
 		delay.setEditable(true);
 		delay.setPrefWidth(64);
+		PopupTipsService.install(delay, new PopupTips("毫秒"));
 		PixivDL.config.bindValueProperty(delay, new ConfigT<Integer>("delay"));
 		InputGroup<ComboBox<Integer>> inputDelay = new InputGroup<>("请求延时：", delay);
 
@@ -147,10 +150,10 @@ public abstract class ViewMain extends PixelApplication {
 		options.setSpacing(6);
 
 		// 操作
-		run = new PixelButton("开始");
+		run = new Button("开始");
 		Zpix.css(run, Zpix.M);
-		stop = new PixelButton("停止");
-		about = new PixelButton("关于");
+		stop = new Button("停止");
+		about = new Button("关于");
 
 		GridPane ctrls = new GridPane();
 		GridPane.setValignment(stop, VPos.BOTTOM);
@@ -170,10 +173,9 @@ public abstract class ViewMain extends PixelApplication {
 
 		// 图片 ID
 		Label labelPids = new Label("作品 ID，以半角 \",\" 分隔");
+		labelPids.setBorder(BetterFX.BORDER_EXBOTTOM);
 		labelPids.setPadding(new Insets(4, 0, 4, 8));
-		labelPids.setBorder(new BorderX(BetterFX.LIGHT_GRAY).width(1, 1, 0, 1).build());
 		pids = new TextArea() {
-			@Override
 			public void paste() {
 				// 重写粘贴
 				final Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -189,7 +191,9 @@ public abstract class ViewMain extends PixelApplication {
 				}
 			}
 		};
+		pids.setWrapText(true);
 		pids.setPromptText("示例：89031688, 88989071");
+		PopupTipsService.install(pids, new PopupTips("示例：89031688, 88989071\n支持单品：88989071_p0\n支持直接粘贴链接：https://www.pixiv.net/artworks/89078791"));
 
 		BorderPane pidsBox = new BorderPane();
 		labelPids.prefWidthProperty().bind(pidsBox.widthProperty());
@@ -200,26 +204,26 @@ public abstract class ViewMain extends PixelApplication {
 		Label labelPath = new Label("下载到：");
 		labelPath.setPadding(new Insets(0, 0, 0, 8));
 		HBox labelPathBox = new HBox(labelPath);
+		labelPathBox.setBorder(BetterFX.BORDER_EXRIGHT);
 		labelPathBox.setAlignment(Pos.CENTER_RIGHT);
-		labelPathBox.setBorder(new BorderX(BetterFX.LIGHT_GRAY).width(1, 1, 1, 0).build());
 		path = new TextField();
-		path.setBorder(new BorderX(BetterFX.LIGHT_GRAY).width(1, 0).build());
 		PixivDL.config.bindTextProperty(path, "path");
-		select = new PixelButton("选择");
-		select.setOnMousePressed(null);
-		select.setOnMouseReleased(null);
-		filter = new PixelButton("过滤失败单品");
-		filter.setOnMousePressed(null);
-		filter.setOnMouseReleased(null);
+		select = new Button("选择");
+		open = new Button("打开");
+		filter = new Button("过滤失败单品");
+		PopupTipsService.install(filter, new PopupTips("过滤失败的合集或单品到 PID 列表重新解析下载"));
+		HBoxGroup centerBtns = new HBoxGroup(select, open, filter);
 
-		BorderPane pathBox = new BorderPane();
+		BorderPaneGroup pathBox = new BorderPaneGroup();
 		BorderPane.setAlignment(labelPath, Pos.CENTER_RIGHT);
 		pathBox.setLeft(labelPathBox);
 		pathBox.setCenter(path);
-		pathBox.setRight(new HBox(select, filter));
+		pathBox.setRight(centerBtns);
 
 		// 下载列表
 		list = new DLTable();
+		list.setBorder(BetterFX.BORDER_EXTOP);
+		list.setPlaceholder(null);
 
 		BorderPane dlBox = new BorderPane();
 		dlBox.setTop(pathBox);
@@ -249,8 +253,8 @@ public abstract class ViewMain extends PixelApplication {
 		HBox logCtrl = new HBox(6, logClean, logExport);
 
 		AnchorPane logPane = new AnchorPane(log, logCtrl);
-		AnchorPaneX.def(log);
-		AnchorPaneX.def(logCtrl, 2, 4, null, null);
+		XAnchorPane.def(log);
+		XAnchorPane.def(logCtrl, 2, 12, null, null);
 
 		BorderPane root = new BorderPane();
 		BorderPane.setMargin(center, new Insets(8, 0, 8, 0));
@@ -258,11 +262,16 @@ public abstract class ViewMain extends PixelApplication {
 		root.setCenter(center);
 		root.setBottom(logPane);
 		root.setPadding(new Insets(8));
+		root.setBorder(BetterFX.BORDER_TOP);
 
-		super.root.setCenter(root);
-		scene.getStylesheets().add("style.css");
-		setSyncTitle("批量爬取 Pixiv 图片 - 夜雨");
-		setMinSize(1024, 650);
+		Scene scene = new Scene(root);
+		scene.getStylesheets().addAll(BetterFX.CSS, "style.css");
+		stage.setScene(scene);
 		stage.getIcons().add(new Image("icon.png"));
+		stage.setTitle("批量爬取 Pixiv 图片 - 夜雨");
+		stage.setMinWidth(1024);
+		stage.setMinHeight(650);
+		stage.setWidth(1024);
+		stage.setHeight(650);
 	}
 }

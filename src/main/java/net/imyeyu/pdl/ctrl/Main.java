@@ -2,7 +2,6 @@ package net.imyeyu.pdl.ctrl;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.scene.image.Image;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import net.imyeyu.betterfx.service.ByteSpeed;
@@ -13,7 +12,6 @@ import net.imyeyu.pdl.PixivDL;
 import net.imyeyu.pdl.bean.PixivImage;
 import net.imyeyu.pdl.core.DownloadThread;
 import net.imyeyu.pdl.view.ViewMain;
-import net.imyeyu.pixelfx.dialog.Alert;
 
 import java.awt.Desktop;
 import java.awt.SplashScreen;
@@ -32,7 +30,6 @@ import java.util.List;
 public class Main extends ViewMain {
 
 	private final ByteSpeed byteSpeed = new ByteSpeed(); // 网速计算
-	private static final Image COOKIE_TIPS = new Image("cookie-tips.png");
 
 	private DownloadThread[] threads; // 当前所有线程
 	private final SimpleBooleanProperty isRunning = new SimpleBooleanProperty(false);
@@ -52,18 +49,6 @@ public class Main extends ViewMain {
 		pids.disableProperty().bind(isRunning);
 		filter.disableProperty().bind(isRunning);
 
-		// Cookie 提示
-		cookie.hoverProperty().addListener((obs, o, isHover) -> {
-			if (isHover) {
-				popupTips.showImage(stage, COOKIE_TIPS);
-			} else {
-				popupTips.hide();
-			}
-		});
-		cookie.setOnMouseMoved(event -> {
-			popupTips.setX(event.getScreenX() + 6);
-			popupTips.setY(event.getScreenY() + 6);
-		});
 		// 网速
 		byteSpeed.valueProperty().addListener((obs, o, b) -> {
 			if (b != null && b != 0) {
@@ -84,7 +69,7 @@ public class Main extends ViewMain {
 			System.setProperty("http.proxyPort", port.getText());
 
 			if (super.pids.getText().length() < 1) {
-				new Alert("没有任务");
+//				new Alert("没有任务");
 				isRunning.set(false);
 				return;
 			}
@@ -186,29 +171,6 @@ public class Main extends ViewMain {
 				multiDL.setValue(1);
 			}
 		});
-		delay.hoverProperty().addListener((obs, o, isHover) -> {
-			if (isHover) {
-				popupTips.showText(stage, "毫秒");
-			} else {
-				popupTips.hide();
-			}
-		});
-		delay.setOnMouseMoved(event -> {
-			popupTips.setX(event.getScreenX() + 6);
-			popupTips.setY(event.getScreenY() + 6);
-		});
-		// 待解析 PID
-		pids.hoverProperty().addListener((obs, o, isHover) -> {
-			if (isHover) {
-				popupTips.showText(stage, "示例：89031688, 88989071\n支持单品：88989071_p0\n支持直接粘贴链接：https://www.pixiv.net/artworks/89078791");
-			} else {
-				popupTips.hide();
-			}
-		});
-		pids.setOnMouseMoved(event -> {
-			popupTips.setX(event.getScreenX() + 6);
-			popupTips.setY(event.getScreenY() + 6);
-		});
 		// 下载位置
 		select.setOnAction(e -> {
 			DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -218,18 +180,17 @@ public class Main extends ViewMain {
 				path.setText(dir.getAbsolutePath());
 			}
 		});
-		// 过滤
-		filter.hoverProperty().addListener((obs, o, isHover) -> {
-			if (isHover) {
-				popupTips.showText(stage, "过滤失败的合集或单品到 PID 列表重新解析下载");
-			} else {
-				popupTips.hide();
+		open.setOnAction(e -> {
+			try {
+				File directory = new File(path.getText());
+				if (directory.exists() && directory.isDirectory()) {
+					Desktop.getDesktop().open(directory);
+				}
+			} catch (IOException ioException) {
+				ioException.printStackTrace();
 			}
 		});
-		filter.setOnMouseMoved(event -> {
-			popupTips.setX(event.getScreenX() + 6);
-			popupTips.setY(event.getScreenY() + 6);
-		});
+		// 过滤失败单品
 		filter.setOnAction(event -> {
 			if (threads != null) {
 				pids.clear();
